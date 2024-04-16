@@ -91,6 +91,42 @@
         "enablement": "false"
       },
       {
+        "command": "raspberry-pi-pico.getCMakePath",
+        "title": "Get CMake path",
+        "category": "Raspberry Pi Pico",
+        "enablement": "false"
+      },
+      {
+        "command": "raspberry-pi-pico.getNinjaPath",
+        "title": "Get ninja path",
+        "category": "Raspberry Pi Pico",
+        "enablement": "false"
+      },
+      {
+        "command": "raspberry-pi-pico.getSdkPath",
+        "title": "Get SDK path",
+        "category": "Raspberry Pi Pico",
+        "enablement": "false"
+      },
+      {
+        "command": "raspberry-pi-pico.getToolchainPath",
+        "title": "Get toolchain path",
+        "category": "Raspberry Pi Pico",
+        "enablement": "false"
+      },
+      {
+        "command": "raspberry-pi-pico.getCompilerPath",
+        "title": "Get compiler path",
+        "category": "Raspberry Pi Pico",
+        "enablement": "false"
+      },
+      {
+        "command": "raspberry-pi-pico.getGdbPath",
+        "title": "Get GDB path",
+        "category": "Raspberry Pi Pico",
+        "enablement": "false"
+      },
+      {
         "command": "raspberry-pi-pico.compileProject",
         "title": "Compile Pico Project",
         "category": "Raspberry Pi Pico",
@@ -152,6 +188,16 @@
           "type": "string",
           "default": "",
           "description": "Path to Ninja executable [no spaces]"
+        },
+        "raspberry-pi-pico.sdkVersion": {
+          "type": "string",
+          "default": "",
+          "description": "SDK Version [no spaces]"
+        },
+        "raspberry-pi-pico.toolchainVersion": {
+          "type": "string",
+          "default": "",
+          "description": "Toolchain Version [no spaces]"
         },
         "raspberry-pi-pico.gitPath": {
           "type": "string",

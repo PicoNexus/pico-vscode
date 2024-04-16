@@ -31,7 +31,13 @@ import CompileProjectCommand from "./commands/compileProject.mjs";
 import LaunchTargetPathCommand from "./commands/launchTargetPath.mjs";
 import {
   GetPythonPathCommand,
-  GetEnvPathCommand
+  GetEnvPathCommand,
+  GetCMakePathCommand,
+  GetNinjaPathCommand,
+  GetSdkPathCommand,
+  GetToolchainPathCommand,
+  GetCompilerPathCommand,
+  GetGdbPathCommand
 } from "./commands/getPaths.mjs";
 import {
   downloadAndInstallCmake,
@@ -86,6 +92,12 @@ export async function activate(context: ExtensionContext): Promise<void> {
       new LaunchTargetPathCommand(),
       new GetPythonPathCommand(),
       new GetEnvPathCommand(),
+      new GetCMakePathCommand(),
+      new GetNinjaPathCommand(),
+      new GetSdkPathCommand(),
+      new GetToolchainPathCommand(),
+      new GetCompilerPathCommand(),
+      new GetGdbPathCommand(),
       new CompileProjectCommand(),
       new ClearGithubApiCacheCommand(),
       new ConditionalDebuggingCommand(),

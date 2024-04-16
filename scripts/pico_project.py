@@ -766,13 +766,13 @@ def generateProjectFiles(projectPath, projectName, sdkPath, projects, debugger, 
             "type": "cortex-debug",
             "servertype": "openocd",\
 {f'{server_path}: "{openocd_path}",' if openocd_path else ""}
-            "gdbPath": "{gdbPath}",
+            "gdbPath": "${{command:raspberry-pi-pico.getGdbPath}}",
             "device": "RP2040",
             "configFiles": [
                 "{debugger}",
                 "target/rp2040.cfg"
             ],
-            "svdFile": "{codeSdkPath(sdkVersion)}/src/rp2040/hardware_regs/rp2040.svd",
+            "svdFile": "${{command:raspberry-pi-pico.getSdkPath}}/src/rp2040/hardware_regs/rp2040.svd",
             "runToEntryPoint": "main",
             // Give restart the same functionality as runToEntryPoint - main
             "postRestartCommands": [
@@ -791,9 +791,9 @@ def generateProjectFiles(projectPath, projectName, sdkPath, projects, debugger, 
             "type": "cortex-debug",
             "servertype": "external",
             "gdbTarget": "localhost:3333",
-            "gdbPath": "{gdbPath}",
+            "gdbPath": "${{command:raspberry-pi-pico.getGdbPath}}",
             "device": "RP2040",
-            "svdFile": "{codeSdkPath(sdkVersion)}/src/rp2040/hardware_regs/rp2040.svd",
+            "svdFile": "${{command:raspberry-pi-pico.getSdkPath}}/src/rp2040/hardware_regs/rp2040.svd",
             "runToEntryPoint": "main",
             // Give restart the same functionality as runToEntryPoint - main
             "postRestartCommands": [
@@ -808,7 +808,7 @@ def generateProjectFiles(projectPath, projectName, sdkPath, projects, debugger, 
             "cwd": "${{workspaceRoot}}",
             "program": "${{command:raspberry-pi-pico.launchTargetPath}}",
             "MIMode": "gdb",
-            "miDebuggerPath": "{gdbPath}",
+            "miDebuggerPath": "${{command:raspberry-pi-pico.getGdbPath}}",
             "miDebuggerServerAddress": "localhost:3333",
             "debugServerPath": "{openocd_path if openocd_path else "openocd"}",
             "debugServerArgs": "-f {debugger} -f target/rp2040.cfg -c \\"adapter speed 5000\\"",
@@ -819,7 +819,7 @@ def generateProjectFiles(projectPath, projectName, sdkPath, projects, debugger, 
                 "limit": 4
             }},
             "preLaunchTask": "Flash",
-            "svdPath": "{codeSdkPath(sdkVersion)}/src/rp2040/hardware_regs/rp2040.svd"
+            "svdPath": "${{command:raspberry-pi-pico.getSdkPath}}/src/rp2040/hardware_regs/rp2040.svd"
         }},
     ]
 }}
@@ -856,10 +856,10 @@ def generateProjectFiles(projectPath, projectName, sdkPath, projects, debugger, 
     {{
         "name": "Pico",
         "compilers": {{
-            "C": "{cPath}",
-            "CXX": "{cPath}"
+            "C": "${{command:raspberry-pi-pico.getCompilerPath}}",
+            "CXX": "${{command:raspberry-pi-pico.getCompilerPath}}"
         }},
-        "toolchainFile": "{propertiesSdkPath(sdkVersion)}/cmake/preload/toolchains/pico_arm_gcc.cmake",
+        "toolchainFile": "${{command:raspberry-pi-pico.getSdkPath}}/cmake/preload/toolchains/pico_arm_gcc.cmake",
         "environmentVariables": {{
             "PATH": "${{command:raspberry-pi-pico.getEnvPath}};${{env:PATH}}"
         }},
@@ -887,25 +887,27 @@ def generateProjectFiles(projectPath, projectName, sdkPath, projects, debugger, 
     "cmake.automaticReconfigure": false,
     "cmake.configureOnOpen": false,
     "cmake.generator": "Ninja",
-    "cmake.cmakePath": "{cmakePath.replace(user_home, "${userHome}") if use_home_var else cmakePath}",
+    "cmake.cmakePath": "${{command:raspberry-pi-pico.getCMakePath}}",
     "C_Cpp.debugShortcut": false,
     "terminal.integrated.env.windows": {{
-        "PICO_SDK_PATH": "{propertiesSdkPath(sdkVersion, force_windows=True)}",
-        "PICO_TOOLCHAIN_PATH": "{propertiesToolchainPath(sdkVersion, force_windows=True)}",
-        "Path": "{propertiesToolchainPath(toolchainVersion, force_windows=True)}/bin;{os.path.dirname(cmakePath.replace(user_home, "${env:USERPROFILE}") if use_home_var else cmakePath)};{os.path.dirname(ninjaPath.replace(user_home, "${env:USERPROFILE}") if use_home_var else ninjaPath)};${{env:PATH}}"
+        "PICO_SDK_PATH": "${{command:raspberry-pi-pico.getSdkPath}}",
+        "PICO_TOOLCHAIN_PATH": "${{command:raspberry-pi-pico.getToolchainPath}}",
+        "Path": "${{command:raspberry-pi-pico.getEnvPath}};${{env:Path}}"
     }},
     "terminal.integrated.env.osx": {{
-        "PICO_SDK_PATH": "{propertiesSdkPath(sdkVersion, force_non_windows=True)}",
-        "PICO_TOOLCHAIN_PATH": "{propertiesToolchainPath(toolchainVersion, force_non_windows=True)}",
-        "PATH": "{propertiesToolchainPath(toolchainVersion, force_non_windows=True)}/bin:{os.path.dirname(cmakePath.replace(user_home, "${env:HOME}") if use_home_var else cmakePath)}:{os.path.dirname(ninjaPath.replace(user_home, "${env:HOME}") if use_home_var else ninjaPath)}:${{env:PATH}}"
+        "PICO_SDK_PATH": "${{command:raspberry-pi-pico.getSdkPath}}",
+        "PICO_TOOLCHAIN_PATH": "${{command:raspberry-pi-pico.getToolchainPath}}",
+        "PATH": "${{command:raspberry-pi-pico.getEnvPath}}:${{env:PATH}}"
     }},
     "terminal.integrated.env.linux": {{
-        "PICO_SDK_PATH": "{propertiesSdkPath(sdkVersion, force_non_windows=True)}",
-        "PICO_TOOLCHAIN_PATH": "{propertiesToolchainPath(toolchainVersion, force_non_windows=True)}",
-        "PATH": "{propertiesToolchainPath(toolchainVersion, force_non_windows=True)}/bin:{os.path.dirname(cmakePath.replace(user_home, "${env:HOME}") if use_home_var else cmakePath)}:{os.path.dirname(ninjaPath.replace(user_home, "${env:HOME}") if use_home_var else ninjaPath)}:${{env:PATH}}"
+        "PICO_SDK_PATH": "${{command:raspberry-pi-pico.getSdkPath}}",
+        "PICO_TOOLCHAIN_PATH": "${{command:raspberry-pi-pico.getToolchainPath}}",
+        "PATH": "${{command:raspberry-pi-pico.getEnvPath}}:${{env:PATH}}"
     }},
     "raspberry-pi-pico.cmakeAutoConfigure": true,
     "raspberry-pi-pico.useCmakeTools": false,
+    "raspberry-pi-pico.sdkVersion": "{sdkVersion}",
+    "raspberry-pi-pico.toolchainVersion": "{toolchainVersion}",
     "raspberry-pi-pico.cmakePath": "{cmakePath.replace(user_home, "${HOME}") if use_home_var else cmakePath}",
     "raspberry-pi-pico.ninjaPath": "{ninjaPath.replace(user_home, "${HOME}") if use_home_var else ninjaPath}"'''
 
@@ -931,19 +933,16 @@ def generateProjectFiles(projectPath, projectName, sdkPath, projects, debugger, 
     "tasks": [
         {{
             "label": "Compile Project",
-            "type": "process",
+            "type": "shell",
             "isBuildCommand": true,
-            "command": "{ninjaPath.replace(user_home, "${userHome}") if use_home_var else ninjaPath}",
+            "command": "${{command:raspberry-pi-pico.getNinjaPath}}",
             "args": ["-C", "${{workspaceFolder}}/build"],
             "group": "build",
             "presentation": {{
                 "reveal": "always",
                 "panel": "dedicated"
             }},
-            "problemMatcher": "$gcc",
-            "windows": {{
-                "command": "{ninjaPath.replace(user_home, "${env:USERPROFILE}") if use_home_var else ninjaPath}.exe"
-            }}
+            "problemMatcher": "$gcc"
         }},
         {{
             "label": "Flash",

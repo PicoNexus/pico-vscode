@@ -11,12 +11,18 @@ import { rimraf, windows as rimrafWindows } from "rimraf";
 import { homedir } from "os";
 import which from "which";
 
-export async function getPythonPath(): Promise<string> {
+export async function getPythonPath(windows: boolean = false): Promise<string> {
   const settings = Settings.getInstance();
   if (settings === undefined) {
     Logger.log("Error: Settings not initialized.");
 
     return "";
+  }
+  let bS = "\\";
+  let fS = "/";
+  if (windows) {
+    bS = "/";
+    fS = "\\";
   }
 
   const pythonPath = (
@@ -27,9 +33,67 @@ export async function getPythonPath(): Promise<string> {
         (process.platform === "win32" ? "python" : "python3"),
       { nothrow: true }
     )
-  ).replaceAll("\\", "/");
+  ).replaceAll(bS, fS);
 
-  return `${pythonPath.replaceAll("\\", "/")}`;
+  return `${pythonPath.replaceAll(bS, fS)}`;
+}
+
+export async function getCMakePath(windows: boolean = false): Promise<string> {
+  const settings = Settings.getInstance();
+  if (settings === undefined) {
+    Logger.log("Error: Settings not initialized.");
+
+    return "";
+  }
+  let bS = "\\";
+  let fS = "/";
+  if (windows) {
+    bS = "/";
+    fS = "\\";
+  }
+
+  const cmake =
+    settings
+      .getString(SettingsKey.cmakePath)
+      ?.replace(HOME_VAR, homedir().replaceAll(bS, fS)) || "cmake";
+
+  const cmakePath = (
+    await which(
+      cmake,
+      { nothrow: true }
+    )
+  ).replaceAll(bS, fS);
+
+  return `${cmakePath.replaceAll(bS, fS)}`;
+}
+
+export async function getNinjaPath(windows: boolean = false): Promise<string> {
+  const settings = Settings.getInstance();
+  if (settings === undefined) {
+    Logger.log("Error: Settings not initialized.");
+
+    return "";
+  }
+  let bS = "\\";
+  let fS = "/";
+  if (windows) {
+    bS = "/";
+    fS = "\\";
+  }
+
+  const ninja =
+    settings
+      .getString(SettingsKey.ninjaPath)
+      ?.replace(HOME_VAR, homedir().replaceAll(bS, fS)) || "ninja";
+
+  const ninjaPath = (
+    await which(
+      ninja,
+      { nothrow: true }
+    )
+  ).replaceAll(bS, fS);
+
+  return `${ninjaPath.replaceAll(bS, fS)}`;
 }
 
 export async function getPath(): Promise<string> {
@@ -40,22 +104,8 @@ export async function getPath(): Promise<string> {
     return "";
   }
 
-  const ninjaPath = (
-    await which(
-      settings
-        .getString(SettingsKey.ninjaPath)
-        ?.replace(HOME_VAR, homedir()) || "ninja",
-      { nothrow: true }
-    )
-  ).replaceAll("\\", "/");
-  const cmakePath = (
-    await which(
-      settings
-        .getString(SettingsKey.cmakePath)
-        ?.replace(HOME_VAR, homedir()) || "cmake",
-      { nothrow: true }
-    )
-  ).replaceAll("\\", "/");
+  const ninjaPath = await getNinjaPath();
+  const cmakePath = await getCMakePath();
   Logger.log(
     settings.getString(SettingsKey.python3Path)?.replace(HOME_VAR, homedir())
   );
@@ -124,10 +174,7 @@ export async function configureCmakeNinja(folder: Uri): Promise<boolean> {
       },
       // eslint-disable-next-line @typescript-eslint/require-await
       async (progress, token) => {
-        const cmake =
-          settings
-            .getString(SettingsKey.cmakePath)
-            ?.replace(HOME_VAR, homedir().replaceAll("\\", "/")) || "cmake";
+        const cmake = await getCMakePath();
 
         // TODO: analyze command result
         // TODO: option for the user to choose the generator
